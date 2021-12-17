@@ -4,7 +4,7 @@
       <q-header elevated class="bg-cyan">
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu"/>
-          <q-toolbar-title>TI TOTVS</q-toolbar-title>
+          <q-toolbar-title>Monitoramento</q-toolbar-title>
           <div>Quasar v{{ $q.version }}</div>
           <q-btn flat round dense icon="whatshot"/>
         </q-toolbar>
