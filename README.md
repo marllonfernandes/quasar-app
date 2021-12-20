@@ -22,9 +22,19 @@ yarn run lint
 quasar build
 ```
 
-### Login production
+### Login application
 ```bash
 email: admin | password: admin
+```
+
+### Url application development
+```bash
+https://quasar-app-bkyih5a1j-marllonfernandes.vercel.app
+```
+
+### Url application production
+```bash
+https://monitor-quasar.vercel.app
 ```
 
 ### Customize the configuration
