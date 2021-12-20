@@ -22,5 +22,10 @@ yarn run lint
 quasar build
 ```
 
+### Login production
+```bash
+email: admin | password: admin
+```
+
 ### Customize the configuration
 See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).

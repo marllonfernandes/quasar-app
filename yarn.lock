@@ -6143,6 +6143,11 @@ vue-eslint-parser@^7.10.0:
     lodash "^4.17.21"
     semver "^6.3.0"
 
+vue-google-login@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/vue-google-login/-/vue-google-login-2.0.5.tgz#228267444a4a7cfa175b345fe146042d1c3e74ac"
+  integrity sha512-C+N8l+otSOiTDQic35bV8Qt/mq9KWGDX35utbZjcD37hGwMXGabW7GetB3cF56r2LfsSiGAnWwPGK2T2V1gZdA==
+
 vue-loader@16.8.3:
   version "16.8.3"
   resolved "https://registry.yarnpkg.com/vue-loader/-/vue-loader-16.8.3.tgz#d43e675def5ba9345d6c7f05914c13d861997087"
@@ -6151,6 +6156,11 @@ vue-loader@16.8.3:
     chalk "^4.1.0"
     hash-sum "^2.0.0"
     loader-utils "^2.0.0"
+
+vue-router-multiguard@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vue-router-multiguard/-/vue-router-multiguard-1.0.3.tgz#f700991719b40642fb22d5dd0baed6777cfecfaa"
+  integrity sha512-56r7WpUUY0QuCfvezdggV5ubtxG0SuCw6RO0SSioq6ec7iAakMt3XLzxHrZARZrv5tMk6kzHLBTERwrl9vcvZg==
 
 vue-router@4.0.12:
   version "4.0.12"

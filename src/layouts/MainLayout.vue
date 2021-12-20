@@ -1,12 +1,17 @@
 <template>
   <div class="q-pa-md">
     <q-layout view="hHh Lpr lff">
-      <q-header elevated class="bg-cyan">
+      <q-header elevated class="bg-primary">
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu"/>
-          <q-toolbar-title>Monitoramento</q-toolbar-title>
-          <div>Quasar v{{ $q.version }}</div>
-          <q-btn flat round dense icon="whatshot"/>
+          <q-toolbar-title>App</q-toolbar-title>
+          <!-- <div>Quasar v{{ $q.version }}</div> -->
+          <!-- <div>Sair</div> -->
+          <q-btn flat round dense icon="fas fa-sign-out-alt" @click="logout()">
+            <q-tooltip anchor="center left" self="center right" :offset="[10, 10]">
+              Sair
+            </q-tooltip>
+          </q-btn>
         </q-toolbar>
       </q-header>
       <q-drawer
@@ -29,7 +34,7 @@
               </q-item-section>
               <q-item-section>Inbox</q-item-section>
             </q-item>
-            <q-item active clickable v-ripple>
+            <q-item clickable v-ripple>
               <q-item-section avatar>
                 <q-icon name="star"/>
               </q-item-section>
@@ -42,11 +47,11 @@
               <q-item-section>Send</q-item-section>
             </q-item>
             <q-separator/>
-            <q-item clickable v-ripple>
+            <q-item active clickable @click="logout()">
               <q-item-section avatar>
-                <q-icon name="drafts"/>
+                <q-icon name="fas fa-sign-out-alt"/>
               </q-item-section>
-              <q-item-section>Drafts</q-item-section>
+              <q-item-section>Sair</q-item-section>
             </q-item>
           </q-list>
         </q-scroll-area>
@@ -113,7 +118,6 @@
 </template>
 
 <script>
-// import EssentialLink from 'components/EssentialLink.vue'
 
 const columns = [
   {
@@ -154,131 +158,6 @@ const rows = [
     sodium: 129,
     calcium: '8%',
     iron: '1%'
-  },
-  {
-    name: 'Eclair',
-    calories: 262,
-    fat: 16.0,
-    carbs: 23,
-    protein: 6.0,
-    sodium: 337,
-    calcium: '6%',
-    iron: '7%'
-  },
-  {
-    name: 'Cupcake',
-    calories: 305,
-    fat: 3.7,
-    carbs: 67,
-    protein: 4.3,
-    sodium: 413,
-    calcium: '3%',
-    iron: '8%'
-  },
-  {
-    name: 'Gingerbread',
-    calories: 356,
-    fat: 16.0,
-    carbs: 49,
-    protein: 3.9,
-    sodium: 327,
-    calcium: '7%',
-    iron: '16%'
-  },
-  {
-    name: 'Jelly bean',
-    calories: 375,
-    fat: 0.0,
-    carbs: 94,
-    protein: 0.0,
-    sodium: 50,
-    calcium: '0%',
-    iron: '0%'
-  },
-  {
-    name: 'Lollipop',
-    calories: 392,
-    fat: 0.2,
-    carbs: 98,
-    protein: 0,
-    sodium: 38,
-    calcium: '0%',
-    iron: '2%'
-  },
-  {
-    name: 'Honeycomb',
-    calories: 408,
-    fat: 3.2,
-    carbs: 87,
-    protein: 6.5,
-    sodium: 562,
-    calcium: '0%',
-    iron: '45%'
-  },
-  {
-    name: 'Donut',
-    calories: 452,
-    fat: 25.0,
-    carbs: 51,
-    protein: 4.9,
-    sodium: 326,
-    calcium: '2%',
-    iron: '22%'
-  },
-  {
-    name: 'KitKat',
-    calories: 518,
-    fat: 26.0,
-    carbs: 65,
-    protein: 7,
-    sodium: 54,
-    calcium: '12%',
-    iron: '6%'
-  }
-]
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
   }
 ]
 
@@ -288,23 +167,38 @@ export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    // EssentialLink
   },
 
   setup () {
     const leftDrawerOpen = ref(false)
 
     return {
-      essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
       },
       drawer: ref(false),
       miniState: ref(true),
+      link: ref('inbox'),
       columns,
       rows
+    }
+  },
+  methods: {
+    logout () {
+      // validacao futura
+      // GET para uma rota em API
+      // localStorage.removeItem('email')
+      // localStorage.removeItem('password')
+      localStorage.removeItem('AUTENTICADO')
+      this.$router.push({ name: 'login' })
     }
   }
 })
 </script>
+
+<style lang="sass">
+.my-menu-link
+  color: white
+  background: #F2C037
+</style>
