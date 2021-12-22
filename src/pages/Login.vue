@@ -17,16 +17,15 @@
         </template>
       </q-input>
       </q-card-section>
-
-      <!-- <q-card-actions class="full-width">
-        <GoogleLogin :params="params" :renderParams="renderParams" :onSuccess="onSuccess" :onFailure="onFailure"></GoogleLogin>
-      </q-card-actions> -->
       <q-card-actions class="full-width">
         <!-- <q-btn class="q-mx-sm" color="primary" label="Login" @click="$router.push({ name: 'home' })" style="width: 100%"/> -->
         <q-btn class="q-mx-sm" color="primary" label="Login" @click="enviarFormulario()" style="width: 100%"/>
       </q-card-actions>
       <q-card-actions class="full-width">
         <q-btn flat no-caps class="q-mx-sm" color="primary" label="Esqueci minha senha" @click="$router.push({ name: 'esqueciSenha' })" style="width: 100%"/>
+      </q-card-actions>
+      <q-card-actions class="full-width">
+        <q-btn flat no-caps class="q-mx-sm" color="primary" label="Send Message WebSocket" @click="sendMessage('Hellow WebSocket Client Quasar')" style="width: 100%"/>
       </q-card-actions>
     </q-card>
 
@@ -42,9 +41,22 @@
 
 <script>
 import { useQuasar } from 'quasar'
-// import GoogleLogin from 'vue-google-login'
+
 export default {
   name: 'PageIndex',
+  created () {
+    // console.log('Starting Connection to WebSocket Server...')
+    this.connection = new WebSocket('ws://localhost:3000?token=123456')
+
+    this.connection.onopen = (event) => {
+      console.log(event)
+      console.log('Successfully connected to the echo WebSocket Server')
+    }
+
+    this.connection.onmessage = (event) => {
+      console.log(event)
+    }
+  },
   beforeMount () {
     // localStorage.setItem('email', 'admin')
     // localStorage.setItem('password', 'amdin')
@@ -85,14 +97,7 @@ export default {
         email: '',
         password: '',
         isPwd: true,
-        params: {
-          client_id: '740515677451-bpsnehu8p56lh2jqtl799vcn0caig6tg.apps.googleusercontent.com' // google
-        },
-        renderParams: {
-          width: 250,
-          height: 50,
-          longtitle: true
-        }
+        connection: null
       }
     }
   },
@@ -118,6 +123,10 @@ export default {
     onSuccess (googleUser) {
       console.log(googleUser)
       console.log(googleUser.getBasicProfile())
+    },
+    sendMessage (message) {
+      console.log(this.connection)
+      this.connection.send(message)
     }
   }
 }
