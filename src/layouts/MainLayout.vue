@@ -61,49 +61,52 @@
           <div class="row">
             <div class="col-12">
               <q-table
-      title="Treats"
+      title="Aplicações"
       :rows="rows"
       :columns="columns"
       row-key="name"
+      :separator="separator"
+      :visible-columns="visibleColumns"
     >
+    <template v-slot:top>
+        <img
+          style="height: 50px; width: 50px"
+          src="../assets/383-3834751_clip-art-monitoring.png"
+        >
+
+        <q-space />
+
+        <q-select
+          v-model="visibleColumns"
+          multiple
+          outlined
+          dense
+          options-dense
+          :display-value="$q.lang.table.columns"
+          emit-value
+          map-options
+          :options="columns"
+          option-value="name"
+          options-cover
+          style="min-width: 150px"
+        />
+      </template>
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="name" :props="props">
-            {{ props.row.name }}
+            <div class="text-subtitle2">{{ props.row.name }}</div>
           </q-td>
-          <q-td key="calories" :props="props">
-            <q-badge color="green">
-              {{ props.row.calories }}
+          <q-td key="url" :props="props">
+              <div class="text-subtitle2">{{ props.row.url }}</div>
+          </q-td>
+          <q-td key="status" :props="props">
+            <q-badge :color="props.row.status === 'Success' ? 'green' : 'red' " class="text-subtitle2">
+              {{ props.row.status }}
             </q-badge>
           </q-td>
-          <q-td key="fat" :props="props">
-            <q-badge color="purple">
-              {{ props.row.fat }}
-            </q-badge>
-          </q-td>
-          <q-td key="carbs" :props="props">
-            <q-badge color="orange">
-              {{ props.row.carbs }}
-            </q-badge>
-          </q-td>
-          <q-td key="protein" :props="props">
-            <q-badge color="primary">
-              {{ props.row.protein }}
-            </q-badge>
-          </q-td>
-          <q-td key="sodium" :props="props">
-            <q-badge color="teal">
-              {{ props.row.sodium }}
-            </q-badge>
-          </q-td>
-          <q-td key="calcium" :props="props">
-            <q-badge color="accent">
-              {{ props.row.calcium }}
-            </q-badge>
-          </q-td>
-          <q-td key="iron" :props="props">
-            <q-badge color="amber">
-              {{ props.row.iron }}
+          <q-td key="message" :props="props">
+            <q-badge color="warning" class="text-subtitle2">
+              {{ props.row.message }}
             </q-badge>
           </q-td>
         </q-tr>
@@ -123,53 +126,24 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: 'Dessert (100g serving)',
+    label: 'Name',
     align: 'left',
     field: row => row.name,
     format: val => `${val}`,
     sortable: true
   },
-  { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-  { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-  { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-  { name: 'protein', label: 'Protein (g)', field: 'protein' },
-  { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-  { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-  { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+  { name: 'url', align: 'center', label: 'URL', field: 'url', sortable: true },
+  { name: 'status', label: 'Status', field: 'status', sortable: true },
+  { name: 'message', label: 'Message', field: 'message' }
 ]
 
-const rows = [
-  {
-    name: 'Frozen Yogurt',
-    calories: 159,
-    fat: 6.0,
-    carbs: 24,
-    protein: 4.0,
-    sodium: 87,
-    calcium: '14%',
-    iron: '1%'
-  },
-  {
-    name: 'Ice cream sandwich',
-    calories: 237,
-    fat: 9.0,
-    carbs: 37,
-    protein: 4.3,
-    sodium: 129,
-    calcium: '8%',
-    iron: '1%'
-  }
-]
+const rows = []
 
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
   name: 'MainLayout',
-
-  components: {
-  },
-
-  setup () {
+  data () {
     const leftDrawerOpen = ref(false)
 
     return {
@@ -180,8 +154,35 @@ export default defineComponent({
       drawer: ref(false),
       miniState: ref(true),
       link: ref('inbox'),
+      visibleColumns: ref(['name', 'url', 'status', 'message']),
       columns,
-      rows
+      rows,
+      connection: null,
+      separator: ref('none')
+    }
+  },
+  components: {
+  },
+  created () {
+    this.connection = new WebSocket('ws://localhost:3000?token=123456')
+
+    this.connection.onopen = (event) => {
+      // console.log(event)
+      // console.log('Successfully connected to the echo WebSocket Server')
+    }
+
+    this.connection.onmessage = (event) => {
+      const data = [JSON.parse(event.data)]
+      for (let i = 0; i < data.length; i++) {
+        const el = data[i]
+        const posEl = this.rows.findIndex(r => r.name === el.name)
+        if (posEl === -1) {
+          this.rows.push({ name: el.name, url: el.url, status: el.status, message: el.message })
+        } else {
+          this.rows[posEl] = el
+        }
+      }
+      // this.rows.push(ramda.mergeAll(this.rows, data))
     }
   },
   methods: {
@@ -192,6 +193,10 @@ export default defineComponent({
       // localStorage.removeItem('password')
       localStorage.removeItem('AUTENTICADO')
       this.$router.push({ name: 'login' })
+    },
+    sendMessage (message) {
+      console.log(this.connection)
+      this.connection.send(message)
     }
   }
 })

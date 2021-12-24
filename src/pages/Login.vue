@@ -49,12 +49,12 @@ export default {
     this.connection = new WebSocket('ws://localhost:3000?token=123456')
 
     this.connection.onopen = (event) => {
-      console.log(event)
-      console.log('Successfully connected to the echo WebSocket Server')
+      // console.log(event)
+      // console.log('Successfully connected to the echo WebSocket Server')
     }
 
     this.connection.onmessage = (event) => {
-      console.log(event)
+      // console.log(event)
     }
   },
   beforeMount () {
@@ -125,7 +125,7 @@ export default {
       console.log(googleUser.getBasicProfile())
     },
     sendMessage (message) {
-      console.log(this.connection)
+      // console.log(this.connection)
       this.connection.send(message)
     }
   }
