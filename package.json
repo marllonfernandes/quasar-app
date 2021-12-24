@@ -6,6 +6,9 @@
   "author": "marllonfernandes <marllon.mfb@gmail.com>",
   "private": true,
   "scripts": {
+    "start": "quasar dev -p 8080",
+    "start-pwa": "quasar dev -m pwa -p 8080",
+    "start-el": "quasar dev -m electron",
     "lint": "eslint --ext .js,.vue ./",
     "test": "echo \"No test specified\" && exit 0"
   },
