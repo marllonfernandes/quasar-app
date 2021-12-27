@@ -5,13 +5,41 @@
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu"/>
           <q-toolbar-title>App</q-toolbar-title>
-          <!-- <div>Quasar v{{ $q.version }}</div> -->
-          <!-- <div>Sair</div> -->
-          <q-btn flat round dense icon="fas fa-sign-out-alt" @click="logout()">
+          <!-- <q-btn flat round dense icon="fas fa-sign-out-alt" @click="logout()">
             <q-tooltip anchor="center left" self="center right" :offset="[10, 10]">
               Sair
             </q-tooltip>
-          </q-btn>
+          </q-btn> -->
+          <q-btn flat round dense icon="fas fa-cog">
+            <q-menu>
+              <div class="row no-wrap q-pa-md">
+                <div class="column">
+                  <div class="text-h6 q-mb-md">Settings</div>
+                  <q-toggle v-model="mobileData" label="Use Mobile Data" />
+                  <q-toggle v-model="bluetooth" label="Bluetooth" />
+                </div>
+
+                <q-separator vertical inset class="q-mx-lg" />
+
+                <div class="column items-center">
+                  <q-avatar size="60px">
+                    <img src="../assets/marllon_3_4.jpg">
+                  </q-avatar>
+
+                  <div class="text-subtitle1 q-mt-md q-mb-xs">{{ emailLogin }}</div>
+
+                  <q-btn
+                    color="primary"
+                    label="Logout"
+                    push
+                    size="sm"
+                    v-close-popup
+                    @click="logout()"
+                  />
+                </div>
+              </div>
+            </q-menu>
+        </q-btn>
         </q-toolbar>
       </q-header>
       <q-drawer
@@ -158,7 +186,10 @@ export default defineComponent({
       columns,
       rows,
       connection: null,
-      separator: ref('none')
+      separator: ref('none'),
+      mobileData: ref(true),
+      bluetooth: ref(true),
+      emailLogin: localStorage.getItem('email') || 'Name'
     }
   },
   components: {
