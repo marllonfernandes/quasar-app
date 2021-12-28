@@ -3,7 +3,7 @@
     <q-card
       style="width: 300px; height: auto; display: flex; flex-direction: column; align-items: center"
     >
-      <q-img src="../assets/logo.png" ratio="1" width="200px" />
+      <q-img src="../assets/logo.png" ratio="1" width="200px" height="200px" />
 
       <q-card-section class="q-pt-none full-width">
         <q-input filled v-model="login.email" label="Email" />
@@ -45,9 +45,7 @@ import { useQuasar } from 'quasar'
 export default {
   name: 'PageIndex',
   created () {
-    // console.log('Starting Connection to WebSocket Server...')
     this.connection = new WebSocket('ws://localhost:3000?token=123456')
-
     this.connection.onopen = (event) => {
       // console.log(event)
       // console.log('Successfully connected to the echo WebSocket Server')
@@ -57,36 +55,15 @@ export default {
       // console.log(event)
     }
   },
-  beforeMount () {
-    // localStorage.setItem('email', 'admin')
-    // localStorage.setItem('password', 'amdin')
-  },
   setup () {
     const $q = useQuasar()
 
     return {
-      triggerPositive () {
-        $q.notify({
-          type: 'positive',
-          message: 'Login realizado com sucesso!'
-        })
-      },
-      triggerNegative () {
+      triggerNotify (msg) {
         $q.notify({
           type: 'negative',
-          message: 'Falha no login, verifique o email e senha se estão corretos!'
-        })
-      },
-      triggerWarning () {
-        $q.notify({
-          type: 'warning',
-          message: 'Falha no login, verifique o email e senha se estão corretos!'
-        })
-      },
-      triggerInfo () {
-        $q.notify({
-          type: 'info',
-          message: 'Falha no login, verifique o email e senha se estão corretos!'
+          // color: 'dark',
+          message: msg
         })
       }
     }
@@ -117,7 +94,7 @@ export default {
         localStorage.setItem('AUTENTICADO', true)
         this.$router.push({ name: 'home' })
       } else {
-        this.triggerNegative()
+        this.triggerNotify('Falha no login, verifique o email e senha se estão corretos!')
       }
     },
     onSuccess (googleUser) {

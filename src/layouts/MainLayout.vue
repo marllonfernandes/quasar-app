@@ -9,25 +9,21 @@
             <q-tooltip anchor="center left" self="center right" :offset="[10, 10]">
               Sair
             </q-tooltip>
-          </q-btn> -->
+          </q-btn>-->
           <q-btn flat round dense icon="fas fa-cog">
             <q-menu>
               <div class="row no-wrap q-pa-md">
                 <div class="column">
                   <div class="text-h6 q-mb-md">Settings</div>
-                  <q-toggle v-model="mobileData" label="Use Mobile Data" />
-                  <q-toggle v-model="bluetooth" label="Bluetooth" />
+                  <q-toggle v-model="mobileData" label="Use Mobile Data"/>
+                  <q-toggle v-model="bluetooth" label="Bluetooth"/>
                 </div>
-
-                <q-separator vertical inset class="q-mx-lg" />
-
+                <q-separator vertical inset class="q-mx-lg"/>
                 <div class="column items-center">
                   <q-avatar size="60px">
                     <img src="../assets/marllon_3_4.jpg">
                   </q-avatar>
-
                   <div class="text-subtitle1 q-mt-md q-mb-xs">{{ emailLogin }}</div>
-
                   <q-btn
                     color="primary"
                     label="Logout"
@@ -39,7 +35,7 @@
                 </div>
               </div>
             </q-menu>
-        </q-btn>
+          </q-btn>
         </q-toolbar>
       </q-header>
       <q-drawer
@@ -89,57 +85,64 @@
           <div class="row">
             <div class="col-12">
               <q-table
-      title="Aplicações"
-      :rows="rows"
-      :columns="columns"
-      row-key="name"
-      :separator="separator"
-      :visible-columns="visibleColumns"
-    >
-    <template v-slot:top>
-        <img
-          style="height: 50px; width: 50px"
-          src="../assets/383-3834751_clip-art-monitoring.png"
-        >
-
-        <q-space />
-
-        <q-select
-          v-model="visibleColumns"
-          multiple
-          outlined
-          dense
-          options-dense
-          :display-value="$q.lang.table.columns"
-          emit-value
-          map-options
-          :options="columns"
-          option-value="name"
-          options-cover
-          style="min-width: 150px"
-        />
-      </template>
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td key="name" :props="props">
-            <div class="text-subtitle2">{{ props.row.name }}</div>
-          </q-td>
-          <q-td key="url" :props="props">
-              <div class="text-subtitle2">{{ props.row.url }}</div>
-          </q-td>
-          <q-td key="status" :props="props">
-            <q-badge :color="props.row.status === 'Success' ? 'green' : 'red' " class="text-subtitle2">
-              {{ props.row.status }}
-            </q-badge>
-          </q-td>
-          <q-td key="message" :props="props">
-            <q-badge color="warning" class="text-subtitle2">
-              {{ props.row.message }}
-            </q-badge>
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
+                title="Aplicações"
+                :rows="rows"
+                :columns="columns"
+                row-key="name"
+                :separator="separator"
+                :visible-columns="visibleColumns"
+                :grid="false"
+              >
+                <template v-slot:top>
+                  <img
+                    style="height: 50px; width: 50px"
+                    src="../assets/monitoring.png"
+                  >
+                  <q-space/>
+                  <q-select
+                    v-model="visibleColumns"
+                    multiple
+                    outlined
+                    dense
+                    options-dense
+                    :display-value="$q.lang.table.columns"
+                    emit-value
+                    map-options
+                    :options="columns"
+                    option-value="name"
+                    options-cover
+                    style="min-width: 150px"
+                  />
+                </template>
+                <template v-slot:body="props">
+                  <q-tr :props="props">
+                    <q-td key="name" :props="props">
+                      <div class="text-subtitle2">{{ props.row.name }}</div>
+                    </q-td>
+                    <q-td key="url" :props="props">
+                      <div class="text-subtitle2">{{ props.row.url }}</div>
+                    </q-td>
+                    <q-td key="status" :props="props">
+                      <q-badge color="accent"
+                        class="text-subtitle2"
+                      >{{ props.row.status }}</q-badge>
+                    </q-td>
+                    <q-td key="message" :props="props">
+                      {{ props.row.message }}
+                    </q-td>
+                    <q-td key="success" :props="props">
+                      <q-badge color="green"
+                        class="text-subtitle2"
+                      >{{ props.row.success }}</q-badge>
+                    </q-td>
+                    <q-td key="error" :props="props">
+                      <q-badge color="red"
+                        class="text-subtitle2"
+                      >{{ props.row.error }}</q-badge>
+                    </q-td>
+                  </q-tr>
+                </template>
+              </q-table>
             </div>
           </div>
         </q-page>
@@ -153,16 +156,18 @@
 const columns = [
   {
     name: 'name',
-    required: true,
+    required: false,
     label: 'Name',
     align: 'left',
     field: row => row.name,
     format: val => `${val}`,
     sortable: true
   },
-  { name: 'url', align: 'center', label: 'URL', field: 'url', sortable: true },
-  { name: 'status', label: 'Status', field: 'status', sortable: true },
-  { name: 'message', label: 'Message', field: 'message' }
+  { name: 'url', required: false, align: 'left', label: 'URL', field: 'url', sortable: true },
+  { name: 'status', required: false, align: 'left', label: 'Status', field: 'status', sortable: true },
+  { name: 'message', required: false, align: 'left', label: 'Message', field: 'message' },
+  { name: 'success', required: false, align: 'left', label: 'Success', field: 'success' },
+  { name: 'error', required: false, align: 'left', label: 'Failure', field: 'error' }
 ]
 
 const rows = []
@@ -182,7 +187,7 @@ export default defineComponent({
       drawer: ref(false),
       miniState: ref(true),
       link: ref('inbox'),
-      visibleColumns: ref(['name', 'url', 'status', 'message']),
+      visibleColumns: ref(['name', 'url', 'status', 'message', 'success', 'error']),
       columns,
       rows,
       connection: null,
@@ -208,7 +213,7 @@ export default defineComponent({
         const el = data[i]
         const posEl = this.rows.findIndex(r => r.name === el.name)
         if (posEl === -1) {
-          this.rows.push({ name: el.name, url: el.url, status: el.status, message: el.message })
+          this.rows.push({ name: el.name, url: el.url, status: el.status, message: el.message, success: el.success, error: el.error })
         } else {
           this.rows[posEl] = el
         }
