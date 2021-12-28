@@ -120,6 +120,9 @@
                 </template>
                 <template v-slot:body="props">
                   <q-tr :props="props">
+                    <q-td auto-width>
+                      <q-btn size="sm" color="primary" round dense outline @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'expand_more'" />
+                    </q-td>
                     <q-td key="name" :props="props">
                       <div class="text-weight-light">{{ props.row.name }}</div>
                     </q-td>
@@ -142,7 +145,7 @@
                         class="text-subtitle2"
                       >{{ props.row.statuscode }}</q-badge>
                     </q-td>
-                    <q-td key="message" :props="props">
+                    <!-- <q-td key="message" :props="props">
                       <div class="text-weight-light">{{ props.row.message }}</div>
                     </q-td>
                     <q-td key="success" :props="props">
@@ -154,6 +157,21 @@
                       <q-badge color="red"
                         class="text-subtitle2"
                       >{{ props.row.error }}</q-badge>
+                    </q-td> -->
+                  </q-tr>
+                  <q-tr v-show="props.expand" :props="props">
+                    <q-td colspan="100%">
+                      <div class="text-left text-subtitle2" style="padding-left: 40px;">
+                        <q-chip>
+                          <q-avatar color="green" text-color="white" size="35px" font-size="12px"> {{ props.row.success }} </q-avatar>
+                           Successful calls
+                        </q-chip>
+                        <q-chip>
+                          <q-avatar color="red" text-color="white" size="35px" font-size="12px"> {{ props.row.error }} </q-avatar>
+                           Successful failed
+                        </q-chip>
+                        Message: {{ props.row.message }}
+                      </div>
                     </q-td>
                   </q-tr>
                 </template>
@@ -172,8 +190,19 @@ const columns = [
   {
     name: 'name',
     required: false,
+    label: '',
+    align: 'left',
+    field: row => row.name,
+    format: val => `${val}`,
+    sortable: true
+  },
+  {
+    name: 'name',
+    required: false,
     label: 'NAME',
     align: 'left',
+    field: row => row.name,
+    format: val => `${val}`,
     sortable: true
   },
   { name: 'url', required: false, align: 'left', label: 'URL', field: 'url', sortable: true },
@@ -203,7 +232,7 @@ export default defineComponent({
       drawer: ref(false),
       miniState: ref(true),
       link: ref('inbox'),
-      visibleColumns: ref(['name', 'url', 'date', 'duration', 'method', 'statuscode', 'message', 'success', 'error']),
+      visibleColumns: ref(['name', 'url', 'date', 'duration', 'method', 'statuscode']),
       columns,
       rows,
       connection: null,
