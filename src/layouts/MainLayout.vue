@@ -95,9 +95,12 @@
               >
                 <template v-slot:top>
                   <img
-                    style="height: 50px; width: 50px"
-                    src="../assets/monitoring.png"
-                  >
+                  style="height: 50px; width: 50px"
+                  src="../assets/monitoring.png">
+                  <p class="text-subtitle1" style="padding-left:10px">
+                    Monitoramento
+                    <q-badge outline color="primary" label="update every 5 seconds" align="top" />
+                  </p>
                   <q-space/>
                   <q-select
                     v-model="visibleColumns"
@@ -117,10 +120,10 @@
                 <template v-slot:body="props">
                   <q-tr :props="props">
                     <q-td key="name" :props="props">
-                      <div class="text-subtitle2">{{ props.row.name }}</div>
+                      <div class="text-weight-light">{{ props.row.name }}</div>
                     </q-td>
                     <q-td key="url" :props="props">
-                      <div class="text-subtitle2">{{ props.row.url }}</div>
+                      <div class="text-weight-light">{{ props.row.url }}</div>
                     </q-td>
                     <q-td key="status" :props="props">
                       <q-badge color="accent"
@@ -128,7 +131,7 @@
                       >{{ props.row.status }}</q-badge>
                     </q-td>
                     <q-td key="message" :props="props">
-                      {{ props.row.message }}
+                      <div class="text-weight-light">{{ props.row.message }}</div>
                     </q-td>
                     <q-td key="success" :props="props">
                       <q-badge color="green"
