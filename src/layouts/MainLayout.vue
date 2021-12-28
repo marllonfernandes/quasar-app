@@ -92,6 +92,7 @@
                 :separator="separator"
                 :visible-columns="visibleColumns"
                 :grid="false"
+                dense
               >
                 <template v-slot:top>
                   <img
@@ -125,10 +126,21 @@
                     <q-td key="url" :props="props">
                       <div class="text-weight-light">{{ props.row.url }}</div>
                     </q-td>
-                    <q-td key="status" :props="props">
-                      <q-badge color="accent"
+                    <q-td key="date" :props="props">
+                      <div class="text-weight-light">{{ props.row.date }}</div>
+                    </q-td>
+                    <q-td key="duration" :props="props">
+                      <div class="text-weight-light">{{ props.row.duration }}</div>
+                    </q-td>
+                    <q-td key="method" :props="props">
+                      <q-badge :color="getColorMethod(props.row.method)"
                         class="text-subtitle2"
-                      >{{ props.row.status }}</q-badge>
+                      >{{ props.row.method }}</q-badge>
+                    </q-td>
+                    <q-td key="statuscode" :props="props">
+                      <q-badge :color="getColorStatusCode(props.row.statuscode)"
+                        class="text-subtitle2"
+                      >{{ props.row.statuscode }}</q-badge>
                     </q-td>
                     <q-td key="message" :props="props">
                       <div class="text-weight-light">{{ props.row.message }}</div>
@@ -160,17 +172,18 @@ const columns = [
   {
     name: 'name',
     required: false,
-    label: 'Name',
+    label: 'NAME',
     align: 'left',
-    field: row => row.name,
-    format: val => `${val}`,
     sortable: true
   },
   { name: 'url', required: false, align: 'left', label: 'URL', field: 'url', sortable: true },
-  { name: 'status', required: false, align: 'left', label: 'Status', field: 'status', sortable: true },
-  { name: 'message', required: false, align: 'left', label: 'Message', field: 'message' },
-  { name: 'success', required: false, align: 'left', label: 'Success', field: 'success' },
-  { name: 'error', required: false, align: 'left', label: 'Failure', field: 'error' }
+  { name: 'date', required: false, align: 'left', label: 'DATE', field: 'date', sortable: true },
+  { name: 'duration', required: false, align: 'left', label: 'DURATION', field: 'duration', sortable: true },
+  { name: 'method', required: false, align: 'left', label: 'METHOD', field: 'method', sortable: true },
+  { name: 'statuscode', required: false, align: 'left', label: 'STATUS CODE', field: 'statuscode', sortable: true },
+  { name: 'message', required: false, align: 'left', label: 'MESSAGE', field: 'message' },
+  { name: 'success', required: false, align: 'left', label: 'SUCCESS', field: 'success' },
+  { name: 'error', required: false, align: 'left', label: 'FAILURE', field: 'error' }
 ]
 
 const rows = []
@@ -190,7 +203,7 @@ export default defineComponent({
       drawer: ref(false),
       miniState: ref(true),
       link: ref('inbox'),
-      visibleColumns: ref(['name', 'url', 'status', 'message', 'success', 'error']),
+      visibleColumns: ref(['name', 'url', 'date', 'duration', 'method', 'statuscode', 'message', 'success', 'error']),
       columns,
       rows,
       connection: null,
@@ -216,7 +229,7 @@ export default defineComponent({
         const el = data[i]
         const posEl = this.rows.findIndex(r => r.name === el.name)
         if (posEl === -1) {
-          this.rows.push({ name: el.name, url: el.url, status: el.status, message: el.message, success: el.success, error: el.error })
+          this.rows.push({ name: el.name, url: el.url, date: el.date, duration: el.duration, method: el.method, statuscode: el.statuscode, message: el.message, success: el.success, error: el.error })
         } else {
           this.rows[posEl] = el
         }
@@ -236,6 +249,34 @@ export default defineComponent({
     sendMessage (message) {
       console.log(this.connection)
       this.connection.send(message)
+    },
+    getColorStatusCode (value) {
+      if (value === 200 || value === 201 || value === 204) {
+        return 'green'
+      } else {
+        return 'red'
+      }
+    },
+    getColorMethod (value) {
+      let color = ''
+      switch (value) {
+        case 'POST':
+          color = 'green'
+          break
+        case 'DELETE':
+          color = 'red'
+          break
+        case 'PUT':
+          color = 'warning'
+          break
+        case 'PATCH':
+          color = 'warning'
+          break
+        default:
+          color = 'primary'
+          break
+      }
+      return color
     }
   }
 })
