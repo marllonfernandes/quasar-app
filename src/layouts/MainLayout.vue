@@ -161,16 +161,28 @@
                   </q-tr>
                   <q-tr v-show="props.expand" :props="props">
                     <q-td colspan="100%">
-                      <div class="text-left text-subtitle2" style="padding-left: 40px;">
-                        <q-chip>
-                          <q-avatar color="green" text-color="white" size="35px" font-size="12px"> {{ props.row.success }} </q-avatar>
-                           Successful calls
-                        </q-chip>
-                        <q-chip>
-                          <q-avatar color="red" text-color="white" size="35px" font-size="12px"> {{ props.row.error }} </q-avatar>
-                           Successful failed
-                        </q-chip>
-                        Message: {{ props.row.message }}
+                      <div class="text-left text-subtitle2" style="padding-left: 40px; padding-right: 40px">
+
+                        <div class="row justify-center">
+                          <div class="col-3">
+                            <q-chip>
+                              <q-avatar color="green" text-color="white" size="35px" font-size="12px"> {{ props.row.success }} </q-avatar>
+                              Successful calls
+                            </q-chip>
+                          </div>
+                          <div class="col-3">
+                            <q-chip>
+                              <q-avatar color="red" text-color="white" size="35px" font-size="12px"> {{ props.row.error }} </q-avatar>
+                              Successful failed
+                            </q-chip>
+                          </div>
+                          <div class="col-3">
+                            Message: {{ props.row.message }}
+                          </div>
+                          <div class="col-3">
+                            Message: {{ props.row.message }}
+                          </div>
+                        </div>
                       </div>
                     </q-td>
                   </q-tr>
