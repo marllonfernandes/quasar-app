@@ -175,7 +175,7 @@
                   <q-tr v-show="props.expand" :props="props">
                     <q-td colspan="100%">
                       <div class="text-left text-subtitle2 q-pa-lg">
-                        <div class="row justify-center">
+                        <!-- <div class="row justify-center">
                           <div class="col-6">
                             <q-chip>
                               <q-avatar color="green" text-color="white" size="35px" font-size="12px"> {{ props.row.success }} </q-avatar>
@@ -188,13 +188,75 @@
                               Successful failed
                             </q-chip>
                           </div>
-                        </div>
+                        </div> -->
                         <div class="row justify-center">
-                          <div class="col-6">
-                            Message: {{ props.row.message }}
-                          </div>
-                          <div class="col-6">
-                            Message: {{ props.row.message }}
+                          <div class="col-12 q-pl-lg">
+                            <!-- Log: {{ props.row.log }} -->
+                            <q-table
+                              :rows="rowsLog"
+                              :columns="columnsLog"
+                              row-key="name"
+                              dense
+                              :separator="separatorLog"
+                              :pagination="initialPaginationLog"
+                              :filter="filter"
+                            >
+                              <template v-slot:top-left>
+                                <div class="row">
+                                  <div class="col-6">
+                                    <q-chip>
+                                      <q-avatar color="green" text-color="white" size="35px" font-size="11px">{{ props.row.total_success }}</q-avatar>
+                                      Total Success
+                                    </q-chip>
+                                  </div>
+                                  <div class="col-6 q-pl-lg">
+                                    <q-chip>
+                                      <q-avatar color="red" text-color="white" size="35px" font-size="11px">{{ props.row.total_error }}</q-avatar>
+                                      Total Failure
+                                    </q-chip>
+                                    <!-- <p class="text-subtitle1 q-pl-xl">Total Failure: {{ props.row.total_error }}</p> -->
+                                  </div>
+                                </div>
+                              </template>
+
+                              <template v-slot:top-right>
+                                <q-input borderless dense debounce="300" v-model="filter" placeholder="Search...">
+                                  <template v-slot:append>
+                                    <q-icon name="search" />
+                                  </template>
+                                </q-input>
+                              </template>
+                              <template v-slot:header="props">
+                                <q-tr :props="props">
+                                  <q-th
+                                    v-for="col in props.cols"
+                                    :key="col.name"
+                                    :props="props"
+                                    class="text-primary"
+                                  >
+                                    {{ col.label }}
+                                  </q-th>
+                                </q-tr>
+                              </template>
+                              <template v-slot:body="props">
+                                <q-tr :props="props">
+                                  <q-td key="statuscode" :props="props">
+                                    <q-badge :color="getColorStatusCode(props.row.statuscode)"
+                                      class="text-subtitle2"
+                                    >{{ props.row.statuscode }}</q-badge>
+                                  </q-td>
+                                  <q-td key="message" :props="props">
+                                    <div class="text-weight-light">{{ props.row.message }}</div>
+                                  </q-td>
+                                  <q-td key="date" :props="props">
+                                    <div class="text-weight-light">{{ props.row.date }}</div>
+                                  </q-td>
+                                  <q-td key="duration" :props="props">
+                                    <div class="text-weight-light">{{ props.row.duration }}</div>
+                                  </q-td>
+                                </q-tr>
+                              </template>
+                            </q-table>
                           </div>
                         </div>
                       </div>
@@ -234,15 +296,29 @@ const columns = [
   },
   { name: 'url', required: false, align: 'left', label: 'URL', field: 'url', sortable: true },
   { name: 'date', required: false, align: 'left', label: 'DATE', field: 'date', sortable: true },
-  { name: 'duration', required: false, align: 'left', label: 'DURATION', field: 'duration', sortable: true },
   { name: 'method', required: false, align: 'left', label: 'METHOD', field: 'method', sortable: true },
-  { name: 'statuscode', required: false, align: 'left', label: 'STATUS CODE', field: 'statuscode', sortable: true },
-  { name: 'message', required: false, align: 'left', label: 'MESSAGE', field: 'message' },
-  { name: 'success', required: false, align: 'left', label: 'SUCCESS', field: 'success' },
-  { name: 'error', required: false, align: 'left', label: 'FAILURE', field: 'error' }
+  { name: 'statuscode', required: false, align: 'left', label: 'STATUS CODE', field: 'statuscode', sortable: true }
+]
+
+// { statuscode: status, message: msg, date: `${dataAtual} ${horas}` ,duration: '' }
+
+const columnsLog = [
+  {
+    name: 'statuscode',
+    required: false,
+    label: 'STATUS CODE',
+    align: 'left',
+    field: row => row.statuscode,
+    format: val => `${val}`,
+    sortable: true
+  },
+  { name: 'message', required: false, align: 'left', label: 'MESSAGE', field: 'message', sortable: true },
+  { name: 'date', required: false, align: 'left', label: 'DATE', field: 'date', sortable: true },
+  { name: 'duration', required: false, align: 'left', label: 'DURATION', field: 'duration', sortable: true }
 ]
 
 const rows = []
+const rowsLog = []
 
 import { defineComponent, ref } from 'vue'
 
@@ -259,9 +335,12 @@ export default defineComponent({
       drawer: ref(false),
       miniState: ref(true),
       link: ref('inbox'),
-      visibleColumns: ref(['name', 'url', 'date', 'duration', 'method', 'statuscode']),
+      visibleColumns: ref(['name', 'url', 'date', 'method', 'statuscode']),
+      filter: ref(''),
       columns,
+      columnsLog,
       rows,
+      rowsLog,
       initialPagination: {
         sortBy: 'desc',
         descending: false,
@@ -269,8 +348,16 @@ export default defineComponent({
         rowsPerPage: 100
         // rowsNumber: xx if getting data from a server
       },
+      initialPaginationLog: {
+        sortBy: 'asc',
+        descending: false,
+        page: 1,
+        rowsPerPage: 10
+        // rowsNumber: xx if getting data from a server
+      },
       connection: null,
       separator: ref('none'),
+      separatorLog: ref('none'),
       mobileData: ref(true),
       bluetooth: ref(true),
       emailLogin: localStorage.getItem('email') || 'Name'
@@ -292,7 +379,15 @@ export default defineComponent({
         const el = data[i]
         const posEl = this.rows.findIndex(r => r.name === el.name)
         if (posEl === -1) {
-          this.rows.push({ name: el.name, url: el.url, date: el.date, duration: el.duration, method: el.method, statuscode: el.statuscode, message: el.message, success: el.success, error: el.error })
+          this.rows.push({ name: el.name, url: el.url, date: el.date, method: el.method, statuscode: el.statuscode, log: el.log })
+          el.log.forEach(ellog => {
+            const posElLog = this.rowsLog.findIndex(s => s.date === ellog.date)
+            if (posElLog === -1) {
+              this.rowsLog.push(ellog)
+            } else {
+              this.rowsLog[posElLog] = ellog
+            }
+          })
         } else {
           this.rows[posEl] = el
         }
