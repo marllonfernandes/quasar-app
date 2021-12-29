@@ -93,13 +93,26 @@
                 :visible-columns="visibleColumns"
                 :grid="false"
                 dense
+                :pagination="initialPagination"
               >
+              <template v-slot:header="props">
+                <q-tr :props="props">
+                  <q-th
+                    v-for="col in props.cols"
+                    :key="col.name"
+                    :props="props"
+                    class="text-primary"
+                  >
+                    {{ col.label }}
+                  </q-th>
+                </q-tr>
+              </template>
                 <template v-slot:top>
                   <img
                   style="height: 50px; width: 50px"
                   src="../assets/monitoring.png">
                   <p class="text-subtitle1" style="padding-left:10px">
-                    Monitoramento
+                    Monitoring
                     <q-badge outline color="primary" label="update every 5 seconds" align="top" />
                   </p>
                   <q-space/>
@@ -161,25 +174,26 @@
                   </q-tr>
                   <q-tr v-show="props.expand" :props="props">
                     <q-td colspan="100%">
-                      <div class="text-left text-subtitle2" style="padding-left: 40px; padding-right: 40px">
-
+                      <div class="text-left text-subtitle2 q-pa-lg">
                         <div class="row justify-center">
-                          <div class="col-3">
+                          <div class="col-6">
                             <q-chip>
                               <q-avatar color="green" text-color="white" size="35px" font-size="12px"> {{ props.row.success }} </q-avatar>
                               Successful calls
                             </q-chip>
                           </div>
-                          <div class="col-3">
+                          <div class="col-6">
                             <q-chip>
                               <q-avatar color="red" text-color="white" size="35px" font-size="12px"> {{ props.row.error }} </q-avatar>
                               Successful failed
                             </q-chip>
                           </div>
-                          <div class="col-3">
+                        </div>
+                        <div class="row justify-center">
+                          <div class="col-6">
                             Message: {{ props.row.message }}
                           </div>
-                          <div class="col-3">
+                          <div class="col-6">
                             Message: {{ props.row.message }}
                           </div>
                         </div>
@@ -206,7 +220,8 @@ const columns = [
     align: 'left',
     field: row => row.name,
     format: val => `${val}`,
-    sortable: true
+    sortable: true,
+    color: 'primary'
   },
   {
     name: 'name',
@@ -247,6 +262,13 @@ export default defineComponent({
       visibleColumns: ref(['name', 'url', 'date', 'duration', 'method', 'statuscode']),
       columns,
       rows,
+      initialPagination: {
+        sortBy: 'desc',
+        descending: false,
+        page: 1,
+        rowsPerPage: 100
+        // rowsNumber: xx if getting data from a server
+      },
       connection: null,
       separator: ref('none'),
       mobileData: ref(true),
