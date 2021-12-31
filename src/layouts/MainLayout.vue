@@ -91,7 +91,7 @@
                 row-key="name"
                 :separator="separator"
                 :visible-columns="visibleColumns"
-                :grid="false"
+                :grid="isMobile"
                 dense
                 :pagination="initialPagination"
               >
@@ -200,6 +200,7 @@
                               :separator="separatorLog"
                               :pagination="initialPaginationLog"
                               :filter="filter"
+                              :grid="isMobile"
                             >
                               <template v-slot:top-left>
                                 <div class="row">
@@ -274,6 +275,8 @@
 
 <script>
 
+// const isMobile = navigator.userAgentData.mobile
+
 const columns = [
   {
     name: 'name',
@@ -334,6 +337,7 @@ export default defineComponent({
       },
       drawer: ref(false),
       miniState: ref(true),
+      isMobile: navigator.userAgentData.mobile,
       link: ref('inbox'),
       visibleColumns: ref(['name', 'url', 'date', 'method', 'statuscode']),
       filter: ref(''),
