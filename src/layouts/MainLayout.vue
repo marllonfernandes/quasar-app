@@ -323,10 +323,45 @@ const columnsLog = [
 const rows = []
 const rowsLog = []
 
+function wrapCsvValue (val, formatFn) {
+  let formatted = formatFn !== void 0
+    ? formatFn(val)
+    : val
+
+  formatted = formatted === void 0 || formatted === null
+    ? ''
+    : String(formatted)
+
+  formatted = formatted.split('"').join('""')
+  /**
+   * Excel accepts \n and \r in strings, but some other CSV parsers do not
+   * Uncomment the next two lines to escape new lines
+   */
+  // .split('\n').join('\\n')
+  // .split('\r').join('\\r')
+
+  return `"${formatted}"`
+}
+
 import { defineComponent, ref } from 'vue'
+import { exportFile, useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'MainLayout',
+  setup () {
+    const $q = useQuasar()
+
+    return {
+      triggerNotify (msg) {
+        $q.notify({
+          type: 'degative',
+          // color: 'dark',
+          icon: 'warning',
+          message: msg
+        })
+      }
+    }
+  },
   data () {
     const leftDrawerOpen = ref(false)
 
@@ -439,6 +474,23 @@ export default defineComponent({
           break
       }
       return color
+    },
+    exportTable () {
+      // naive encoding to csv format
+      const content = [columnsLog.map(col => wrapCsvValue(col.label))].concat(
+        rows.map(row => columnsLog.map(col => wrapCsvValue(
+          typeof col.field === 'function'
+            ? col.field(row)
+            : row[col.field === void 0 ? col.name : col.field],
+          col.format
+        )).join(','))
+      ).join('\r\n')
+
+      const status = exportFile('log-monitoring.csv', content, 'text/csv')
+
+      if (status !== true) {
+        this.triggerNotify('Browser denied file download...')
+      }
     }
   }
 })
