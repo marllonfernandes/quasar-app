@@ -21,6 +21,7 @@
     "timers": "^0.1.1",
     "vue-google-login": "^2.0.5",
     "vue-google-oauth2": "^1.5.8",
+    "vue-google-signin-button": "^1.0.4",
     "vue-router-multiguard": "^1.0.3",
     "vuex": "^4.0.1"
   },

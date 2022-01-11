@@ -158,42 +158,15 @@
                         class="text-subtitle2"
                       >{{ props.row.statuscode }}</q-badge>
                     </q-td>
-                    <!-- <q-td key="message" :props="props">
-                      <div class="text-weight-light">{{ props.row.message }}</div>
-                    </q-td>
-                    <q-td key="success" :props="props">
-                      <q-badge color="green"
-                        class="text-subtitle2"
-                      >{{ props.row.success }}</q-badge>
-                    </q-td>
-                    <q-td key="error" :props="props">
-                      <q-badge color="red"
-                        class="text-subtitle2"
-                      >{{ props.row.error }}</q-badge>
-                    </q-td> -->
                   </q-tr>
                   <q-tr v-show="props.expand" :props="props">
                     <q-td colspan="100%">
                       <div class="text-left text-subtitle2 q-pa-lg">
-                        <!-- <div class="row justify-center">
-                          <div class="col-6">
-                            <q-chip>
-                              <q-avatar color="green" text-color="white" size="35px" font-size="12px"> {{ props.row.success }} </q-avatar>
-                              Successful calls
-                            </q-chip>
-                          </div>
-                          <div class="col-6">
-                            <q-chip>
-                              <q-avatar color="red" text-color="white" size="35px" font-size="12px"> {{ props.row.error }} </q-avatar>
-                              Successful failed
-                            </q-chip>
-                          </div>
-                        </div> -->
                         <div class="row justify-center">
                           <div class="col-12 q-pl-lg">
                             <!-- Log: {{ props.row.log }} -->
                             <q-table
-                              :rows="rowsLog"
+                              :rows="props.row.log"
                               :columns="columnsLog"
                               row-key="name"
                               dense
@@ -203,20 +176,28 @@
                               :grid="isMobile"
                             >
                               <template v-slot:top-left>
-                                <div class="row">
-                                  <div class="col-6">
+                                <div class="q-pa-md q-gutter-md">
+                                  <div>
                                     <q-chip>
-                                      <q-avatar color="green" text-color="white" size="35px" font-size="11px">{{ props.row.total_success }}</q-avatar>
+                                      <q-avatar color="accent" text-color="white" font-size="09px" size="35px">
+                                        {{ props.row.log.length }}
+                                      </q-avatar>
+                                      Total Rows
+                                    </q-chip>
+                                    <q-chip>
+                                      <q-avatar color="positive" text-color="white" font-size="09px" size="35px">
+                                        {{ props.row.log.filter(el => el.statuscode === 200 || el.statuscode === 201 || el.statuscode === 204).length || 0 }}
+                                      </q-avatar>
                                       Total Success
                                     </q-chip>
-                                  </div>
-                                  <div class="col-6 q-pl-lg">
                                     <q-chip>
-                                      <q-avatar color="red" text-color="white" size="35px" font-size="11px">{{ props.row.total_error }}</q-avatar>
+                                      <q-avatar color="red" text-color="white" font-size="09px" size="35px">
+                                        {{ props.row.log.filter(el => el.statuscode !== 200 & el.statuscode !== 201 & el.statuscode !== 204).length || 0 }}
+                                      </q-avatar>
                                       Total Failure
                                     </q-chip>
-                                    <!-- <p class="text-subtitle1 q-pl-xl">Total Failure: {{ props.row.total_error }}</p> -->
                                   </div>
+
                                 </div>
                               </template>
 
@@ -275,8 +256,6 @@
 
 <script>
 
-// const isMobile = navigator.userAgentData.mobile
-
 const columns = [
   {
     name: 'name',
@@ -298,12 +277,9 @@ const columns = [
     sortable: true
   },
   { name: 'url', required: false, align: 'left', label: 'URL', field: 'url', sortable: true },
-  { name: 'date', required: false, align: 'left', label: 'DATE', field: 'date', sortable: true },
   { name: 'method', required: false, align: 'left', label: 'METHOD', field: 'method', sortable: true },
   { name: 'statuscode', required: false, align: 'left', label: 'STATUS CODE', field: 'statuscode', sortable: true }
 ]
-
-// { statuscode: status, message: msg, date: `${dataAtual} ${horas}` ,duration: '' }
 
 const columnsLog = [
   {
@@ -321,30 +297,9 @@ const columnsLog = [
 ]
 
 const rows = []
-const rowsLog = []
-
-function wrapCsvValue (val, formatFn) {
-  let formatted = formatFn !== void 0
-    ? formatFn(val)
-    : val
-
-  formatted = formatted === void 0 || formatted === null
-    ? ''
-    : String(formatted)
-
-  formatted = formatted.split('"').join('""')
-  /**
-   * Excel accepts \n and \r in strings, but some other CSV parsers do not
-   * Uncomment the next two lines to escape new lines
-   */
-  // .split('\n').join('\\n')
-  // .split('\r').join('\\r')
-
-  return `"${formatted}"`
-}
 
 import { defineComponent, ref } from 'vue'
-import { exportFile, useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -374,12 +329,11 @@ export default defineComponent({
       miniState: ref(true),
       isMobile: navigator.userAgentData.mobile,
       link: ref('inbox'),
-      visibleColumns: ref(['name', 'url', 'date', 'method', 'statuscode']),
+      visibleColumns: ref(['name', 'url', 'method', 'statuscode']),
       filter: ref(''),
       columns,
       columnsLog,
       rows,
-      rowsLog,
       initialPagination: {
         sortBy: 'desc',
         descending: false,
@@ -402,37 +356,13 @@ export default defineComponent({
       emailLogin: localStorage.getItem('email') || 'Name'
     }
   },
-  components: {
-  },
   created () {
     this.connection = new WebSocket('ws://localhost:3000?token=123456')
-
     this.connection.onopen = (event) => {
       // console.log(event)
       // console.log('Successfully connected to the echo WebSocket Server')
     }
-
-    this.connection.onmessage = (event) => {
-      const data = [JSON.parse(event.data)]
-      for (let i = 0; i < data.length; i++) {
-        const el = data[i]
-        const posEl = this.rows.findIndex(r => r.name === el.name)
-        if (posEl === -1) {
-          this.rows.push({ name: el.name, url: el.url, date: el.date, method: el.method, statuscode: el.statuscode, log: el.log })
-          el.log.forEach(ellog => {
-            const posElLog = this.rowsLog.findIndex(s => s.date === ellog.date)
-            if (posElLog === -1) {
-              this.rowsLog.push(ellog)
-            } else {
-              this.rowsLog[posElLog] = ellog
-            }
-          })
-        } else {
-          this.rows[posEl] = el
-        }
-      }
-      // this.rows.push(ramda.mergeAll(this.rows, data))
-    }
+    this.load()
   },
   methods: {
     logout () {
@@ -475,21 +405,22 @@ export default defineComponent({
       }
       return color
     },
-    exportTable () {
-      // naive encoding to csv format
-      const content = [columnsLog.map(col => wrapCsvValue(col.label))].concat(
-        rows.map(row => columnsLog.map(col => wrapCsvValue(
-          typeof col.field === 'function'
-            ? col.field(row)
-            : row[col.field === void 0 ? col.name : col.field],
-          col.format
-        )).join(','))
-      ).join('\r\n')
+    updateLog () {
+      this.load()
+    },
+    load () {
+      this.connection.onmessage = async (event) => {
+        const data = JSON.parse(event.data)
 
-      const status = exportFile('log-monitoring.csv', content, 'text/csv')
-
-      if (status !== true) {
-        this.triggerNotify('Browser denied file download...')
+        for (let i = 0; i < data.length; i++) {
+          const el = data[i]
+          const posEl = this.rows.findIndex(r => r.name === el.name)
+          if (posEl === -1) {
+            this.rows.push({ name: el.name, url: el.url, date: el.date, method: el.method, statuscode: el.statuscode, log: el.log })
+          } else {
+            this.rows[posEl] = el
+          }
+        }
       }
     }
   }

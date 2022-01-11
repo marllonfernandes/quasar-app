@@ -22,6 +22,10 @@
         <q-btn class="q-mx-sm" color="primary" label="Login" @click="enviarFormulario()" style="width: 100%"/>
       </q-card-actions>
       <q-card-actions class="full-width">
+        <!-- GOOGLE -->
+        <!-- <div class="g-signin2" data-onsuccess="onSignIn"></div> -->
+      </q-card-actions>
+      <q-card-actions class="full-width">
         <q-btn flat no-caps class="q-mx-sm" color="primary" label="Esqueci minha senha" @click="$router.push({ name: 'esqueciSenha' })" style="width: 100%"/>
       </q-card-actions>
       <q-card-actions class="full-width">
@@ -65,6 +69,13 @@ export default {
           // color: 'dark',
           message: msg
         })
+      },
+      triggerNotifyW (msg) {
+        $q.notify({
+          type: 'info',
+          // color: 'dark',
+          message: msg
+        })
       }
     }
   },
@@ -97,9 +108,8 @@ export default {
         this.triggerNotify('Falha no login, verifique o email e senha se estão corretos!')
       }
     },
-    onSuccess (googleUser) {
-      console.log(googleUser)
-      console.log(googleUser.getBasicProfile())
+    loginGoogle () {
+      this.triggerNotifyW('Google')
     },
     sendMessage (message) {
       // console.log(this.connection)
